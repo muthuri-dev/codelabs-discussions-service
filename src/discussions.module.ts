@@ -16,6 +16,8 @@ import { DiscussionsService } from './discussions.service';
       autoSchemaFile: {
         federation: 2,
       },
+      introspection: true,
+      playground: true,
     }),
   ],
   providers: [
