@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Discussion {
+  id         String    @id @default(cuid())
+  title      String
+  content    String
+  image      String
+  user_id    String
+  created_at DateTime  @default(now())
+  comments   Comment[]
+
+  @@map("discussions")
+}
+
+model Comment {
+  id             String          @id @default(cuid())
+  content        String
+  user_id        String
+  discussion     Discussion?     @relation(fields: [discussion_id], references: [id])
+  discussion_id  String?
+  created_at     DateTime        @default(now())
+  nestedComments NestedComment[]
+
+  @@index([discussion_id])
+  @@map("comments")
+}
+
+model NestedComment {
+  id         String   @id @default(cuid())
+  content    String
+  user_id    String
+  comment    Comment? @relation(fields: [comment_id], references: [id])
+  comment_id String?
+  created_at DateTime @default(now())
+
+  @@index([comment_id])
+  @@map("nested_comments")
+}
