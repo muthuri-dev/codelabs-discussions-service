@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismadbService } from './prismadb/prismadb.service';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
-import { Comment, Discussion, NestedComment } from './entities/entities';
+import {
+  Discussion,
+  NestedComment,
+  DiscussionComment,
+} from './entities/entities';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateNestedCommentDto } from './dto/create-nestedComm.dto';
 
@@ -16,9 +20,9 @@ export class DiscussionsService {
     });
   }
 
-  async createComment(createDto: CreateCommentDto): Promise<Comment> {
+  async createComment(createDto: CreateCommentDto): Promise<DiscussionComment> {
     const { content, discussion_id, user_id } = createDto;
-    return await this.prismaService.comment.create({
+    return await this.prismaService.discussionComment.create({
       data: { content, discussion_id, user_id },
     });
   }
@@ -38,8 +42,8 @@ export class DiscussionsService {
     return await this.prismaService.discussion.findMany();
   }
 
-  async getDiscussionComments(id: string): Promise<Comment[]> {
-    return await this.prismaService.comment.findMany({
+  async getDiscussionComments(id: string): Promise<DiscussionComment[]> {
+    return await this.prismaService.discussionComment.findMany({
       where: { discussion_id: id },
     });
   }

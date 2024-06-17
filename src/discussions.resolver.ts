@@ -1,11 +1,15 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { DiscussionsService } from './discussions.service';
-import { Comment, Discussion, NestedComment } from './entities/entities';
+import {
+  DiscussionComment,
+  Discussion,
+  NestedComment,
+} from './entities/entities';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateNestedCommentDto } from './dto/create-nestedComm.dto';
 
-@Resolver(() => Discussion || Comment || NestedComment)
+@Resolver(() => Discussion || DiscussionComment || NestedComment)
 export class DiscussionsResolver {
   constructor(private readonly discussionsService: DiscussionsService) {}
 
@@ -16,10 +20,10 @@ export class DiscussionsResolver {
     return await this.discussionsService.createDiscussion(createDto);
   }
 
-  @Mutation(() => Comment)
+  @Mutation(() => DiscussionComment)
   async createComment(
     @Args('comment') createDto: CreateCommentDto,
-  ): Promise<Comment> {
+  ): Promise<DiscussionComment> {
     return await this.discussionsService.createComment(createDto);
   }
 
@@ -35,8 +39,10 @@ export class DiscussionsResolver {
     return await this.discussionsService.getDiscussions();
   }
 
-  @Query(() => [Comment])
-  async getDiscussionComments(@Args('id') id: string): Promise<Comment[]> {
+  @Query(() => [DiscussionComment])
+  async getDiscussionComments(
+    @Args('id') id: string,
+  ): Promise<DiscussionComment[]> {
     return await this.discussionsService.getDiscussionComments(id);
   }
 

@@ -14,18 +14,18 @@ datasource db {
 }
 
 model Discussion {
-  id         String    @id @default(cuid())
-  title      String
-  content    String
-  image      String
-  user_id    String
-  created_at DateTime  @default(now())
-  comments   Comment[]
+  id                  String              @id @default(cuid())
+  title               String
+  content             String
+  image               String
+  user_id             String
+  created_at          DateTime            @default(now())
+  discussion_comments DiscussionComment[]
 
   @@map("discussions")
 }
 
-model Comment {
+model DiscussionComment {
   id             String          @id @default(cuid())
   content        String
   user_id        String
@@ -35,16 +35,16 @@ model Comment {
   nestedComments NestedComment[]
 
   @@index([discussion_id])
-  @@map("comments")
+  @@map("discussion_comments")
 }
 
 model NestedComment {
-  id         String   @id @default(cuid())
-  content    String
-  user_id    String
-  comment    Comment? @relation(fields: [comment_id], references: [id])
-  comment_id String?
-  created_at DateTime @default(now())
+  id                 String             @id @default(cuid())
+  content            String
+  user_id            String
+  discussion_comment DiscussionComment? @relation(fields: [comment_id], references: [id])
+  comment_id         String?
+  created_at         DateTime           @default(now())
 
   @@index([comment_id])
   @@map("nested_comments")

@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 @ObjectType()
 export class Discussion {
@@ -20,12 +20,12 @@ export class Discussion {
   @Field()
   created_at: Date;
 
-  @Field(() => [Comment], { nullable: true })
-  comments?: Comment[];
+  @Field(() => [DiscussionComment], { nullable: true })
+  discussion_comments?: DiscussionComment[];
 }
 
 @ObjectType()
-export class Comment {
+export class DiscussionComment {
   @Field(() => ID)
   id: string;
 
