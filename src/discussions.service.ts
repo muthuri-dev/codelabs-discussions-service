@@ -6,7 +6,7 @@ import {
   NestedComment,
   DiscussionComment,
 } from './entities/entities';
-import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateDCommentDto } from './dto/create-comment.dto';
 import { CreateNestedCommentDto } from './dto/create-nestedComm.dto';
 
 @Injectable()
@@ -20,7 +20,9 @@ export class DiscussionsService {
     });
   }
 
-  async createComment(createDto: CreateCommentDto): Promise<DiscussionComment> {
+  async createDComment(
+    createDto: CreateDCommentDto,
+  ): Promise<DiscussionComment> {
     const { content, discussion_id, user_id } = createDto;
     return await this.prismaService.discussionComment.create({
       data: { content, discussion_id, user_id },

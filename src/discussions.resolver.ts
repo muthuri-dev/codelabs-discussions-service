@@ -6,7 +6,7 @@ import {
   NestedComment,
 } from './entities/entities';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateDCommentDto } from './dto/create-comment.dto';
 import { CreateNestedCommentDto } from './dto/create-nestedComm.dto';
 
 @Resolver(() => Discussion || DiscussionComment || NestedComment)
@@ -21,10 +21,10 @@ export class DiscussionsResolver {
   }
 
   @Mutation(() => DiscussionComment)
-  async createComment(
-    @Args('comment') createDto: CreateCommentDto,
+  async createDComment(
+    @Args('comment') createDto: CreateDCommentDto,
   ): Promise<DiscussionComment> {
-    return await this.discussionsService.createComment(createDto);
+    return await this.discussionsService.createDComment(createDto);
   }
 
   @Mutation(() => NestedComment)
