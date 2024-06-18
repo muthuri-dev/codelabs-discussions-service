@@ -36,6 +36,9 @@ export class DiscussionComment {
   discussion_id: string;
 
   @Field()
+  user_id: string;
+
+  @Field()
   created_at: Date;
 
   @Field(() => [NestedComment], { nullable: true })
@@ -52,6 +55,9 @@ export class NestedComment {
 
   @Field()
   comment_id: string;
+
+  @Field()
+  user_id: string;
 
   @Field()
   created_at: Date;
