@@ -2,71 +2,163 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### **Overview**
 
-## Description
+This project is a NestJS-based application that uses Prisma for database interactions, GraphQL for API implementation, and DTOs for data validation and transformation. The main focus is on managing discussions, comments, and nested comments within a discussion forum.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### **Main Application Structure**
 
-## Installation
+The application is structured with various modules, services, and resolvers that handle specific tasks within the application.
 
-```bash
-$ npm install
+---
+
+### **Module Structure**
+
+#### **Discussions Module**
+
+The `DiscussionsModule` organizes related components, including services and resolvers, into a cohesive unit.
+
+```mermaid
+classDiagram
+    class DiscussionsModule {
+        +DiscussionsService discussionsService
+        +DiscussionsResolver discussionsResolver
+        +PrismaDbService prismaDbService
+    }
+    
+    DiscussionsModule --> DiscussionsService : uses
+    DiscussionsModule --> DiscussionsResolver : uses
+    DiscussionsModule --> PrismaDbService : uses
 ```
 
-## Running the app
+- **DiscussionsModule**: Manages discussions, comments, and nested comments.
+- **Dependencies**: `DiscussionsService`, `DiscussionsResolver`, `PrismaDbService`.
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+### **Entities**
 
-# production mode
-$ npm run start:prod
+Entities represent the structure of the data managed by the application. 
+
+```mermaid
+classDiagram
+    class Discussion {
+        +int id
+        +string title
+        +string content
+        +List~Comment~ comments
+    }
+
+    class Comment {
+        +int id
+        +int discussionId
+        +string content
+        +List~NestedComment~ nestedComments
+    }
+
+    class NestedComment {
+        +int id
+        +int commentId
+        +string content
+    }
+
+    Discussion --> Comment : has_many
+    Comment --> NestedComment : has_many
 ```
 
-## Test
+- **Discussion**: Represents a discussion with title and content, and contains multiple comments.
+- **Comment**: Represents a comment, which is linked to a discussion and can have nested comments.
+- **NestedComment**: Represents a comment that is nested under another comment.
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+### **Service Layer**
 
-# test coverage
-$ npm run test:cov
+The `DiscussionsService` handles the business logic and interacts with the database to manage discussions and comments.
+
+```mermaid
+classDiagram
+    class DiscussionsService {
+        +createDiscussion(CreateDiscussionDto data)
+        +addComment(int discussionId, CreateCommentDto data)
+    }
+
+    DiscussionsService --> PrismaDbService : uses
 ```
 
-## Support
+- **DiscussionsService**: Contains methods to create discussions and add comments, interacting with the database through `PrismaDbService`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+### **GraphQL Resolver**
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The `DiscussionsResolver` maps GraphQL queries and mutations to the corresponding service methods, enabling interaction with the API.
+
+```mermaid
+classDiagram
+    class DiscussionsResolver {
+        +createDiscussion(CreateDiscussionDto data)
+        +getDiscussions()
+    }
+
+    DiscussionsResolver --> DiscussionsService : uses
+```
+
+- **DiscussionsResolver**: Defines GraphQL mutations and queries, linking them to the appropriate service methods.
+
+---
+
+### **Prisma Service**
+
+The `PrismaDbService` manages all database interactions using Prisma ORM, extending the `PrismaClient`.
+
+```mermaid
+classDiagram
+    class PrismaDbService {
+        +extends PrismaClient
+    }
+```
+
+- **PrismaDbService**: Extends `PrismaClient` to enable all database operations within the application.
+
+---
+
+### **Data Flow**
+
+Below is a visual representation of the data flow within the application, starting from the API request, going through the resolver, service, and finally interacting with the database.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant GraphQLAPI
+    participant DiscussionsResolver
+    participant DiscussionsService
+    participant PrismaDbService
+    participant Database
+
+    Client->>GraphQLAPI: Mutation/Query Request
+    GraphQLAPI->>DiscussionsResolver: Forward Request
+    DiscussionsResolver->>DiscussionsService: Call Service Method
+    DiscussionsService->>PrismaDbService: Database Interaction
+    PrismaDbService->>Database: Execute Query
+    Database->>PrismaDbService: Return Data
+    PrismaDbService->>DiscussionsService: Return Data
+    DiscussionsService->>DiscussionsResolver: Return Data
+    DiscussionsResolver->>GraphQLAPI: Return Response
+    GraphQLAPI->>Client: Send Response
+```
+
+- **Client**: Initiates a request through the GraphQL API.
+- **GraphQLAPI**: Receives the request and forwards it to the resolver.
+- **DiscussionsResolver**: Calls the service methods based on the request.
+- **DiscussionsService**: Handles the logic and interacts with the database through `PrismaDbService`.
+- **PrismaDbService**: Executes the database query and returns the data.
+- **Database**: Stores the data and processes the queries.
+- **Client**: Receives the final response.
+
+---
 
 ## License
 
